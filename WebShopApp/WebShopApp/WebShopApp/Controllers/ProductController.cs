@@ -95,16 +95,37 @@ namespace WebShopApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([FromForm] ProductCreateVM product)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //populate dropdowns, inache sa prazni sled failed post
             {
-                var createdId = _productService.Create(product.ProductName, product.BrandId,
-                    product.CategoryId, product.Picture,
-                    product.Quantity, product.Price, product.Discount);
+                var createdId = _productService.Create(
+                    product.ProductName,
+                    product.BrandId,
+                    product.CategoryId,
+                    product.Picture,
+                    product.Quantity,
+                    product.Price,
+                    product.Discount
+                );
                 if (createdId)
                 {
                     return RedirectToAction(nameof(Index));
                 }
-               
+
+                product.Brands = _brandService.GetBrands()
+                .Select(b => new BrandPairVM()
+                {
+                    Id = b.Id,
+                    Name = b.BrandName
+                })
+                .ToList();
+
+                product.Categories = _categoryService.GetCategories()
+                    .Select(c => new CategoryPairVM()
+                    {
+                        Id = c.Id,
+                        Name = c.CategoryName
+                    }).ToList();
+
             }
             return View(product); //bez product ne raboti
         }
@@ -153,61 +174,82 @@ namespace WebShopApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ProductEditVM product)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //populate dropdowns, inache sa prazni sled failed post
             {
-                var updated = _productService.Update(id, product.ProductName, product.BrandId,
-                    product.CategoryId, product.Picture, product.Quantity, product.Price, product.Discount);
+                var updated = _productService.Update(
+                    id,
+                    product.ProductName,
+                    product.BrandId,
+                    product.CategoryId,
+                    product.Picture,
+                    product.Quantity,
+                    product.Price,
+                    product.Discount
+                );
+
                 if (updated)
                 {
-                    return this.RedirectToAction("Index");
+                    return RedirectToAction("Index");
                 }
             }
+
+            // Re-populate dropdown lists before returning the view
+            product.Brands = _brandService.GetBrands()
+                .Select(b => new BrandPairVM { Id = b.Id, Name = b.BrandName })
+                .ToList();
+
+            product.Categories = _categoryService.GetCategories()
+                .Select(c => new CategoryPairVM { Id = c.Id, Name = c.CategoryName })
+                .ToList();
+
             return View(product);
-            
         }
 
+
         // GET: ProductController/Delete/5
-        public ActionResult Delete(int id)
+        public IActionResult Delete(int id)
         {
-            Product item = _productService.GetProductById(id);
+            var item = _productService.GetProductById(id);
             if (item == null)
             {
                 return NotFound();
             }
-            ProductDetailsVM product = new ProductDetailsVM()
+
+            var model = new ProductDeleteVM
             {
                 Id = item.Id,
                 ProductName = item.ProductName,
-                BrandId = item.BrandId,
                 BrandName = item.Brand.BrandName,
-                CategoryId = item.CategoryId,
                 CategoryName = item.Category.CategoryName,
                 Picture = item.Picture,
                 Quantity = item.Quantity,
                 Price = item.Price,
                 Discount = item.Discount
             };
-            return View(product);
+
+            return View(model);
         }
 
+
         // POST: ProductController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public IActionResult DeleteConfirmed(int id)
         {
             var deleted = _productService.RemoveById(id);
+
             if (!deleted)
             {
-                return RedirectToAction("Success");
+                return NotFound();
             }
-            else
-            {
-                return View();
-            }
+
+            return RedirectToAction("Success");
         }
+
         public IActionResult Success()
         {
             return View();
         }
+
     }
 }

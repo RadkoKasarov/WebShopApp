@@ -11,11 +11,7 @@ namespace WebShopApp.Core.Contracts
 {
     public interface IProductService
     {
-<<<<<<< HEAD
         bool Create(string name, int brandId, int categoryId, string picture, int quantity, decimal price, decimal discount);
-=======
-        bool Create(string name, int brandId, string picture, int quantity, decimal price, decimal discount);
->>>>>>> f30f44bdcf686606733ee47de7e21974199bd34c
         bool Update(int productId, string name, int brandId, int categoryId, string picture, int quantity, decimal price, decimal discount);
 
         List<Product> GetProducts();

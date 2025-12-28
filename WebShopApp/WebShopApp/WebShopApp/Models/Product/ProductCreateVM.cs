@@ -3,10 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 
 using WebShopApp.Models.Brand;
-<<<<<<< HEAD
 using WebShopApp.Models.Category;
-=======
->>>>>>> f30f44bdcf686606733ee47de7e21974199bd34c
 
 namespace WebShopApp.Models.Product
 {
@@ -21,7 +18,6 @@ namespace WebShopApp.Models.Product
 
         [Required]
         [Display(Name = "Brand")]
-<<<<<<< HEAD
         public int BrandId { get; set; }
         public virtual List<BrandPairVM> Brands { get; set; } = new List<BrandPairVM>();
 
@@ -42,10 +38,6 @@ namespace WebShopApp.Models.Product
         [Display(Name = "Discount")]
         public decimal Discount { get; set; }
 
-=======
-        public int CategoryId { get; set; }
-        public virtual List<BrandPairVM> Categories { get; set; } = new List<BrandPairVM>();
->>>>>>> f30f44bdcf686606733ee47de7e21974199bd34c
 
 
     }
