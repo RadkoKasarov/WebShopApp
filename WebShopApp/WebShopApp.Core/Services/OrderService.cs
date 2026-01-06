@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using WebShopApp.Core.Contracts;
 using WebShopApp.Infrastructure.Data;
+using WebShopApp.Infrastructure.Data.Domain;
 
 namespace WebShopApp.Core.Services
 {
@@ -31,7 +32,7 @@ namespace WebShopApp.Core.Services
                 OrderDate = DateTime.Now,
                 ProductId = productId,
                 UserId = userId,
-                Quantity = quantity
+                Quantity = quantity,
                 Price = product.Price,
                 Discount = product.Discount
             };
@@ -42,6 +43,11 @@ namespace WebShopApp.Core.Services
             this._context.Orders.Add(item);
 
             return _context.SaveChanges() != 0;
+        }
+
+        public List<Order> GetOrders()
+        {
+            throw new NotImplementedException();
         }
     }
 }

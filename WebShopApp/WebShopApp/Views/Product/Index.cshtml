@@ -89,10 +89,11 @@
 					@if ((this.User.Identity.IsAuthenticated) && this.User.IsInRole("Administrator"))
 					{
 						<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-					}
-					@if ((this.User.Identity.IsAuthenticated) && this.User.IsInRole("Administrator"))
-					{
 						<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+					}
+					@if (this.User.Identity.IsAuthenticated)
+					{
+						<a asp action="Order" asp-controller="Order" asp-route-id="@item.Id" class="btn btn-warning">Order</a>
 					}
 					<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success">Details</a>
 				</td>
