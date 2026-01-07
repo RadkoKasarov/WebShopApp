@@ -1,71 +1,107 @@
 ﻿@model WebShopApp.Models.Order.OrderCreateVM
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Order";
 }
+
+<style>
+    /* Прави readonly полетата да изглеждат неактивни и да не светят в синьо */
+    input[readonly] {
+        background-color: #e9ecef !important;
+        cursor: not-allowed;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
 <h1>Order</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input type="hidden" asp-for="ProductId" class="form-control"
-                       readonly="readonly" />
-            </div>
-            <div class="form-group">
+
+            <input type="hidden" asp-for="ProductId" />
+            <input type="hidden" asp-for="Picture" />
+
+            <div class="form-group mb-2">
                 <label asp-for="ProductName" class="control-label"></label>
-                <input asp-for="ProductName" class="form-control" readonly="readonly" />
+                <input asp-for="ProductName" class="form-control" readonly />
             </div>
-            <div class="form-group">
-                <label asp-for="Picture" class="control-label"></label>
-                <input type="hidden" asp-for="Picture" class="form-control"
-                       readonly="readonly" />
+
+            <div class="form-group mb-2">
+                <label>Product Image</label>
                 <div>
-                    <img src="@Html.DisplayFor(model => model.Picture)" alt="Image"
-                         width="100" />
+                    <img src="@Model.Picture" alt="Product Image" width="150" class="img-thumbnail" />
                 </div>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-2">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" readonly="readonly" />
+                <input asp-for="Price" id="Price" class="form-control" readonly />
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-2">
                 <label asp-for="Discount" class="control-label"></label>
-                <input asp-for="Discount" class="form-control" readonly="readonly" />
+                <div class="input-group">
+                    <input asp-for="Discount" id="Discount" class="form-control" readonly />
+                    <span class="input-group-text">%</span>
+                </div>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-2">
                 <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" onclick="calcSum()" />
+                <input asp-for="Quantity" id="Quantity" class="form-control" oninput="calcSum()" min="1" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
-
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" readonly="readonly" />
+                <input asp-for="TotalPrice" id="TotalPrice" class="form-control" readonly />
             </div>
-            <br />
+
             <div class="form-group">
-                <input type="submit" value="Order" class="btn btn-primary" />
-
-                <a asp-action="Index" asp-controller="Product" class="btn btn-
-warning">Back to Products</a>
-
+                <input type="submit" value="Confirm Order" class="btn btn-primary" />
+                <a asp-action="Index" asp-controller="Product" class="btn btn-warning">Back to Products</a>
             </div>
         </form>
     </div>
 </div>
+
 <script>
     function calcSum() {
-    let q = document.getElementsByName('Quantity')[0].value;
-    let p = document.getElementsByName('Price')[0].value;
-    let d = document.getElementsByName('Discount')[0].value;
-    let sum = Number(q) * (Number(p) - Number(p) * Number(d) / 100);
-    document.getElementsByName('TotalPrice')[0].value = sum.toFixed(2)
+        // Взимаме елементите по ID
+        let qElem = document.getElementById('Quantity');
+        let pElem = document.getElementById('Price');
+        let dElem = document.getElementById('Discount');
+        let tElem = document.getElementById('TotalPrice');
+
+        // Конвертираме към числа, като сменяме запетая с точка за сигурност
+        let q = Number(qElem.value.replace(',', '.'));
+        let p = Number(pElem.value.replace(',', '.'));
+        let d = Number(dElem.value.replace(',', '.'));
+
+        if (!isNaN(q) && !isNaN(p)) {
+            let discountValue = p * (d / 100);
+            let sum = q * (p - discountValue);
+
+            // Записваме резултата, форматиран до 2 знака след запетаята
+            tElem.value = sum.toFixed(2);
+        } else {
+            tElem.value = "0.00";
+        }
     }
-    document.getElementById('Quantity').max = @Model.QuantityInStock;
-    document.getElementById('Quantity').min = 1;
+
+    // Задаваме ограниченията на количеството веднага при зареждане
+    window.onload = function() {
+        let qInput = document.getElementById('Quantity');
+        qInput.max = @Model.QuantityInStock;
+        qInput.min = 1;
+
+        // Извикваме calcSum първоначално, за да не е празно Total Price
+        calcSum();
+    };
 </script>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
