@@ -47,6 +47,24 @@ namespace WebShopApp.Core.Services
 
         public List<Order> GetOrders()
         {
+            return _context.Orders.OrderByDescending(x => x.OrderDate).ToList();
+        }
+        public List<Order> GetOrdersByUser(string userId)
+        {
+            return _context.Orders.Where(x=>x.UserId == userId)
+                .OrderByDescending(x => x.OrderDate).ToList();
+        }
+        public Order GetOrderById(int orderId)
+        {
+            throw new NotImplementedException();
+        }
+        public bool RemoveById(int orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(int orderId, int productId, string userId, int quantity)
+        {
             throw new NotImplementedException();
         }
     }

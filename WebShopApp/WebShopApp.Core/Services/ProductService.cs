@@ -36,11 +36,6 @@ namespace WebShopApp.Core.Services
             return _context.SaveChanges() != 0;
         }
 
-        public bool Create(string name, int brandId, string picture, int quantity, decimal price, decimal discount)
-        {
-            throw new NotImplementedException();
-        }
-
         public Product GetProductById(int productId)
         {
             return _context.Products.Find(productId);
