@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebShopApp.Core.Contracts;
@@ -12,7 +13,11 @@ namespace WebShopApp
 	{
 		public static void Main(string[] args)
 		{
-			var builder = WebApplication.CreateBuilder(args);
+            var culture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
 			var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
